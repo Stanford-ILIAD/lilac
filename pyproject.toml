@@ -49,9 +49,9 @@ dev = [
 ]
 
 [project.urls]
-homepage = "https://github.com/siddk/lilac"
-repository = "https://github.com/siddk/lilac"
-documentation = "https://github.com/siddk/lilac"
+homepage = "https://github.com/Stanford-ILIAD/lilac"
+repository = "https://github.com/Stanford-ILIAD/lilac"
+documentation = "https://github.com/Stanford-ILIAD/lilac"
 
 [tool.setuptools]
 packages=["lilac"]
