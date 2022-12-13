@@ -34,7 +34,7 @@ Note: the instructions below assume that `conda` (Miniconda/Anaconda are both fi
 However, feel free to use the environment manager of your choosing!
 
 ```bash
-git clone https://github.com/Stanford-ILIAD/lilac
+git clone https://<anonymized>/lilac
 cd lilac
 
 conda create --name lilac python=3.8
@@ -58,7 +58,7 @@ This will ensure the entire PyTorch ecosystem is installed as well.
 Then, assuming a conda environment named `lilac`:
 
 ```bash
-git clone https://github.com/Stanford-ILIAD/lilac
+git clone https://<anonymized>/lilac
 cd lilac
 
 # Assumes Polymetis + PyTorch Ecosystem has already been installed...
