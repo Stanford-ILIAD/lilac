@@ -1,0 +1,26 @@
+// Original-State -- Records original x/y/z positions of the various objects in the scene; each demonstration records
+//                   *offsets* (in cm) along each dimension (from each object's center-of-mass). The coordinate frame we
+//                   use is relative to the robot/table; (0, 0, 0) is the point on the robot's base touching the table,
+//                   with -x meaning to the "left" of the robot base, +y meaning towards the far end of the table, and
+//                   +z representing height from table.
+//
+//                   This file is mostly for convenience/resetting the environment given we share robots with different
+//                   students; the model only sees the offsets (learning actual locations implicitly, through data).
+{
+  "apple": [10.0, 2.0, 3.0],
+  "banana": [12.0, 6.0, 1.5],
+  "black-mug": [25.2, 33.5, 4.0],
+  "blue-marker": [-19.0, 10.0, 21.0],
+  "book": [-2.0, 30.0, 3.0],
+  "crumpled-paper": [-21.0, 30.0, 20.0],
+  "drawer": [-21.0, 31.0, 15.0],
+  "eraser": [25.0, 30.5, 4.0],
+  "green-marker": [-22.0, 10.0, 21.0],
+  "marker-holder": [23.0, 30.5, 3.0],
+  "notebook": [0.0, 7.0, 1.0],
+  "plant-holder": [-10.0, 41.0, 21.0],
+  "shelf": [-21.0, 34.0, 23.0],
+  "tape": [21.5, 33.5, 2.0],
+  "trash-can": [-21.0, 42.0, 22.0],
+  "yellow-cup": [9.0, 40.0, 25.0],
+}

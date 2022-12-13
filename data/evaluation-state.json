@@ -1,0 +1,20 @@
+// Evaluation-State -- Should have the "evaluation time offsets"; make sure to update this with offsets on each
+//                     new rollout (call to `scripts/evaluate.py`)
+{
+  "apple": [1.0, 1.0, 0.0],
+  "banana": [-1.0, -0.5, 0.0],
+  "black-mug": [0.0, 0.5, 0.0],
+  "blue-marker": [-1.0, 0.0, .0],
+  "book": [3.0, 0.0, 0.0],
+  "crumpled-paper": [0.0, 2.0, 0.0],
+  "drawer": [0.0, 0.0, 0.0],
+  "eraser": [0.0, 0.0, 0.0],
+  "green-marker": [0.0, 0.0, -0.5],
+  "marker-holder": [0.0, 0.5, 0.0],
+  "notebook": [0.0, 0.0, 0.0],
+  "plant-holder": [0.0, 0.0, 0.0],
+  "shelf": [0.0, 0.0, 0.0],
+  "tape": [0.0, 0.0, 0.0],
+  "trash-can": [0.0, 0.0, 0.0],
+  "yellow-cup": [-1.0, 3.0, 0.0],
+}

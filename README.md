@@ -1,146 +1,139 @@
-# LILAC
+# LILAC – Online Language Corrections for Robotic Manipulation via Shared Autonomy 
 
-> *LILAC*: Companion Codebase for "No, to the Right – Online Language Corrections for Robotic Manipulation via Shared Autonomy"
+> Open-Source Code Release for 
+> *"No, to the Right – Online Language Corrections for Robotic Manipulation via Shared Autonomy"* 
 
-Repository containing code and experiments for the LILAC project. Built with
-[PyTorch-Lightning](https://pytorch-lightning.readthedocs.io/en/latest/),
-using [Anaconda](https://www.anaconda.com/) for python dependencies and sane quality defaults
-(`black`, `isort`, `flake8`, `precommit`).
+Repository containing scripts for kinesthetic demonstration collection, model definitions (with baselines) in 
+[PyTorch](https://pytorch.org/), model training code 
+(via [PyTorch-Lightning](https://pytorch-lightning.readthedocs.io/en/latest/)), as well as code for deploying and 
+running models on actual robots (e.g., for a demo or user study).
 
----
-
-## Contributing
-
-Before committing to the repository, *make sure to set up your dev environment and pre-commit install
-(`pre-commit install`)!* Here are the basic contribution guidelines:
-
-+ Install and activate the Conda Environment using the `QUICKSTART` instructions below.
-
-+ On installing new dependencies (via `pip` or `conda`), please make sure to update the `environment-<ID>.yaml` files
-via the following command (note that you need to separately create the `environment-cpu.yaml` file by exporting from
-your local development environment!):
-
-  `make serialize-env --arch=<cpu | gpu>`
-
-*More detailed instructions for intricate set up (e.g., simulators, experiment tooling, etc.) can be found in
-[`CONTRIBUTING.md`](./CONTRIBUTING.md).*
+Uses [Anaconda](https://www.anaconda.com/) for maintaining python dependencies & reproducibility, and sane quality 
+defaults (`black`, `isort`, `flake8`, `precommit`). Robot control stack for the Franka Emika Panda arm is built 
+using [Polymetis](https://facebookresearch.github.io/fairo/polymetis/).
 
 ---
 
 ## Quickstart
 
-Clones `lilac` to the working directory, then walks through dependency setup, leveraging the
-`environment-<arch>.yaml` files.
+Clones `lilac` to the working directory, then walks through dependency setup using the pinned versions in
+`environments/requirements.txt`. If contributing to this repository, please make sure to run `pre-commit install`
+before pushing a commit.
 
-### Shared Environment (for Clusters w/ Centralized Conda)
+We have two sets of installation instructions, mainly for setting up GPU-accelerated PyTorch for training models (this
+is by no means necessary; models train within 30 minutes on modern CPUs), as well as for setting up a CPU-only version
+for inference (e.g., what runs on our lightweight robot control computer). 
 
-Project-specific conda environments have already been setup for both the Stanford-NLP and ILIAD clusters, under the
-name `lilac`. The only necessary steps to take are cloning the repo, activating the appropriate
-environment, and running `pre-commit install` to start developing (if you develop on the remote).
+Note: we have written the core of `lilac` as a Python module, with the `setup.py` and `pyproject.toml` providing the 
+minimal information to fully replicate the Python environment used for the original work. For further reproducibility,
+we define `environments/requirements.txt` with more explicit pinned versions of the remaining dependencies.
 
-### Local Development - Linux w/ GPU & CUDA 11.3
+### Installation - Linux w/ GPU & CUDA 11.3 - Training
 
-Note: Assumes that `conda` (Miniconda or Anaconda are both fine) is installed and on your path.
-
-Ensure that you're using the appropriate `environment-<gpu | cpu>.yaml` file --> if PyTorch doesn't build properly for
-your setup, checking the CUDA Toolkit is usually a good place to start. We have `environment-<gpu>.yaml` files for CUDA
-11.3 (and any additional CUDA Toolkit support can be added -- file an issue if necessary).
-
-```bash
-git clone https://github.com/Stanford-ILIAD/lilac
-cd lilac
-conda env create -f environments/environment-gpu.yaml  # Choose CUDA Kernel based on Hardware - by default use 11.3!
-conda activate lilac
-pre-commit install  # Important!
-```
-
-### Local Development - CPU (Mac OS & Linux)
-
-Note: Assumes that `conda` (Miniconda or Anaconda are both fine) is installed and on your path. Use the `-cpu`
-environment file.
+Note: the instructions below assume that `conda` (Miniconda/Anaconda are both fine) is installed and on your path. 
+However, feel free to use the environment manager of your choosing!
 
 ```bash
-git clone https://github.com/Stanford-ILIAD/lilac
+git clone https://github.com/siddk/lilac
 cd lilac
-conda env create -f environments/environment-cpu.yaml
+
+conda create --name lilac python=3.8
 conda activate lilac
-pre-commit install  # Important!
+
+# Install PyTorch == 1.11.0, Torchvision == 0.12.0, TorchAudio == 0.11.0 w/ CUDA Toolkit 11.3
+#   > Any more recent versions will work as well; just edit the pinned versions in `requirements.txt`
+pip install torch==1.11.0+cu113 torchvision==0.12.0+cu113 torchaudio==0.11.0 --extra-index-url https://download.pytorch.org/whl/cu113
+
+# Install remaining dependencies via an editable install (make sure you're in the root of this repository!)
+#   > Note: if contributing to this repository: run `pip install -e ".[dev]"` for black / flake8 / isort / pre-commit
+pip install -e .
 ```
 
-## Usage
+### Installation - Linux CPU (Intel NUC) - Robot Control Computer
 
-This repository comes with sane defaults for `black`, `isort`, and `flake8` for formatting and linting. It additionally
-defines a bare-bones Makefile (to be extended for your specific build/run needs) for formatting/checking, and dumping
-updated versions of the dependencies (after installing new modules).
+To use [Polymetis](https://facebookresearch.github.io/fairo/polymetis/installation.html) for the robot control 
+stack, it's highly recommended to follow the [conda-based installation instructions here](https://facebookresearch.github.io/fairo/polymetis/installation.html#from-anaconda).
+This will ensure the entire PyTorch ecosystem is installed as well.
 
-Other repository-specific usage notes should go here (e.g., training models, running a saved model, running a
-visualization, etc.).
+Then, assuming a conda environment named `lilac`:
 
-## Repository Structure
+```bash
+git clone https://github.com/siddk/lilac
+cd lilac
 
-High-level overview of repository file-tree (expand on this as you build out your project). This is meant to be brief,
-more detailed implementation/architectural notes should go in [`ARCHITECTURE.md`](./ARCHITECTURE.md).
+# Assumes Polymetis + PyTorch Ecosystem has already been installed...
+conda activate lilac
 
-+ `conf` - Hydra structured configurations (`.py`) for various runs (used in lieu of `argparse` or `typed-argument-parser`)
-+ `environments` - Serialized conda environments for both CPU and GPU (CUDA 11.3). Other architectures/CUDA toolkit
-environments can be added here as necessary.
-+ `src/` - Source code - has all utilities for preprocessing, Lightning model definitions, utilities.
-    + `preprocessing/` - Preprocessing code (w/ augmentation if necessary).
-    + `models/` - Lightning modules.
-+ `tests/` - Tests - please unit test (& integration test) your code when possible.
-+ `train.py` - Top-level (main) entry point to repository, for training and evaluating models. Define additional
-top-level scripts as necessary.
-+ `Makefile` - Makefile (by default, supports `conda` serialization, and linting). Expand to your needs.
-+ `.flake8` - Flake8 configuration file (Sane Defaults).
-+ `.pre-commit-config.yaml` - Pre-commit configuration file (Sane Defaults).
-+ `pyproject.toml` - Black and isort configuration file (Sane Defaults).
-+ `ARCHITECTURE.md` - [WIP] writeup of repository architecture/design choices, how to extend/re-work for different
- applications.
-+ `CONTRIBUTING.md` - [WIP] instructions for contributing to the repository, beyond Quickstart above.
-+ `README.md` - You are here!
-+ `LICENSE` - By default, research code is made available under the GPLv3 License. Change as you see fit, but think
-deeply about why!
+# Install remaining dependencies...
+#   > Note: if contributing to this repository: run `pip install -e ".[dev]"` for black / flake8 / isort / pre-commit
+pip install -e .
+```  
 
 ---
 
-## Start-Up (from Scratch)
+## Usage & Entry Points
 
-Use these commands if you're starting a repository from scratch (this shouldn't be necessary typically since original
-repository gets set up once, but I like to keep this in the README in case things break in the future).
+This repository contains all the steps necessary to collect demonstration data for training LILAC models, as well as the
+LILA and Language-Conditioned Imitation Learning Baselines, with further code for running online evaluations.
 
-Generally, if you're just trying to run/use this code, look at the Quickstart section above.
+Following the general structure of the method outlined in our paper, we have defined the following four "top-level"
+scripts that are meant to be run in order:
 
-### GPU & Cluster Environments (CUDA 11.3)
+1. `python scripts/demonstrate.py <task_id>` - This script walks through collecting kinesthetic demonstrations for a given
+    task (e.g., `water-plant`, `clean-trash`, or `towards-shelf` from the paper). Note the format that the demonstrations
+    are saved in.
+    + After this, make sure to add language annotations following the directions in `data/language`
 
-```bash
-conda create --name lilac python=3.8
-conda activate lilac
-conda install pytorch torchvision torchaudio cudatoolkit=11.3 -c pytorch
-conda install ipython pytorch-lightning -c conda-forge
+2. `python scripts/alphas.py` - this script takes the language annotations collected in the prior step, and uses the
+   OpenAI GPT-3 API to perform Alpha annotation, as per Section 4.4 of our paper. Note that this requires a (paid)
+   OpenAI GPT-3 API key.
 
-pip install black flake8 hydra-core isort matplotlib pre-commit wandb
+3. `python scripts/train.py --model <lilac | lila | imitation> ...` - this standalone script reads the demonstrations 
+   collected in Step 1 and trains the various models compared in this work (you will need to pass a list of tasks you
+   wish to train on). The default hyperparameters are fairly generalizable.
+   
+4. `python scripts/evaluate.py --run_directory <run-directory>` - once you've trained a model, this script enables online
+    evaluation of the learned policy (if Imitation Learning) or latent actions controller (if LILA/LILAC) on an actual
+    robot. 
 
-# Install other dependencies via pip below -- conda dependencies should be added above (always conda before pip!)
-...
-```
+These 4 steps comprise the full pipeline we use in our work. The user study is conducted as per the description in the
+paper, using the `evaluate.py` script.
 
-### CPU Environments (Usually for Local Development -- Geared for Mac OS & Linux)
+*Note*: To run any of the real-robot scripts (e.g., `demonstrate.py` and `evaluate.py`), you'll need to run the Robot
+and Gripper servers on the Franka Control Computer; default launch scripts for reference can be found in `scripts/bin/`.
 
-Similar to the above, but installs the CPU-only versions of Torch and similar dependencies.
+---
 
-```bash
-conda create --name lilac python=3.8
-conda activate lilac
-conda install pytorch torchvision torchaudio -c pytorch
-conda install ipython pytorch-lightning -c conda-forge
+## Repository Structure
 
-pip install black flake8 hydra-core isort matplotlib pre-commit wandb
+High-level overview of the repository -- besides the entry points described above, the important parts of the codebase
+are in `models/` (architecture, optimizer, and training definitions), and in `robot/` (all robot control code).
 
-# Install other dependencies via pip below -- conda dependencies should be added above (always conda before pip!)
-...
-```
++ `conf/` - Polymetis configurations for the Franka Emika Panda Arm.
++ `environments/` - Stores any & all information for reproducing the Python environment from the original work; right
+                    now all dependencies are serialized in `requirements.txt`, but we'll add support for more versions
+                    and platforms as needed. 
++ `lilac/` - Package source code - has *everything* -- utilities for preprocessing, model definitions, training.
+    + `models/` - PyTorch-Lightning self-contained modules containing all architecture definition and training 
+                  hyperparameters for LILAC, LILA, and Language-Conditioned Imitation Learning.
+    + `preprocessing/` - Preprocessing utilities & PyTorch Dataset initialization functions.
+    + `robot/` - Isolate Polymetis control code, with subdirectories for defining an OpenAI gym-like interface for 
+                 communicating with the physical robot, and utility classes for collecting kinesthetic demonstrations.
++ `Makefile` - Makefile (by default, supports autoformatting, linting, and style checks). 
+               Requires `pip install -e ".[dev]"`
++ `.flake8` - Flake8 configuration file (Sane Defaults).
++ `.pre-commit-config.yaml` - Pre-commit configuration file (Sane Defaults).
++ `LICENSE` - All of the LILAC codebase is made available under the MIT License. 
++ `pyproject.toml` - Black and isort configuration file (Sane Defaults).
++ `README.md` - You are here!
++ `setup.py` - Default `setuptools` setup.py until PEP 621 is fully resolved, enabling editable installations.
 
-### Containerized Setup
+---
 
-Support for running `lilac` inside of a Singularity or Docker container is TBD. If this support is
-urgently required, please file an issue.
+## Questions & Support
+
+We are committed to maintaining this repository for the foreseeable future, across multiple PyTorch and Polymetis 
+versions. If a specific platform/library release is not supported, please post an issue to the Github (or feel free to
+fork and PR).
+
+For more sensitive queries, please email `skaramcheti@cs.stanford.edu`.
